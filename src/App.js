@@ -9,7 +9,9 @@ import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/w
 import { registerSoundfonts } from '@strudel/soundfonts';
 import { stranger_tune } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
-import OnHushButton from './Components/Cell4Preprocessor/onHushButton';
+import OnHushButton from './Components/Preprocessor/onHushButton';
+import PlayStopButton from './Components/PreprocessingEditor/playStopButton';
+import ProcessButton from './Components/PreprocessingEditor/processButton';
 
 let globalEditor = null;
 
@@ -122,11 +124,9 @@ return (
                     <div className="col-md-4">
 
                         <nav>
-                            <button id="process" className="btn btn-outline-primary">Preprocess</button>
-                            <button id="process_play" className="btn btn-outline-primary">Proc & Play</button>
+                            <ProcessButton />
                             <br />
-                            <button id="play" className="btn btn-outline-primary">Play</button>
-                            <button id="stop" className="btn btn-outline-primary">Stop</button>
+                            <PlayStopButton />
                         </nav>
                     </div>
                 </div>
