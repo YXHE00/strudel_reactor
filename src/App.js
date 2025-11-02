@@ -12,6 +12,7 @@ import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import OnHushButton from './Components/Preprocessor/onHushButton';
 import PlayStopButton from './Components/PreprocessingEditor/playStopButton';
 import ProcessButton from './Components/PreprocessingEditor/processButton';
+import ControlsPanel from './Components/Preprocessor/controlsPanel';
 
 let globalEditor = null;
 
@@ -137,6 +138,7 @@ return (
                     </div>
                     <div className="col-md-4">
                         <OnHushButton value={p1Mode} onChange={setP1Mode} />
+                        <ControlsPanel />
                     </div>
                 </div>
             </div>
