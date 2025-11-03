@@ -13,6 +13,7 @@ import OnHushButton from './Components/Preprocessor/onHushButton';
 import PlayStopButton from './Components/PreprocessingEditor/playStopButton';
 import ProcessButton from './Components/PreprocessingEditor/processButton';
 import ControlsPanel from './Components/Preprocessor/controlsPanel';
+import PreprocessTextarea from './Components/Preprocessor/preprocessTextarea';
 
 let globalEditor = null;
 
@@ -20,54 +21,29 @@ const handleD3Data = (event) => {
     console.log(event.detail);
 };
 
-export function SetupButtons() {
-
-    document.getElementById('play').addEventListener('click', () => globalEditor.evaluate());
-    document.getElementById('stop').addEventListener('click', () => globalEditor.stop());
-    document.getElementById('process').addEventListener('click', () => {
-        Proc()
-    }
-    )
-    document.getElementById('process_play').addEventListener('click', () => {
-        if (globalEditor != null) {
-            Proc()
-            globalEditor.evaluate()
-        }
-    }
-    )
-}
-
-
-
-export function ProcAndPlay() {
-    if (globalEditor != null && globalEditor.repl.state.started == true) {
-        console.log(globalEditor)
-        Proc()
-        globalEditor.evaluate();
-    }
-}
-
-export function Proc() {
-
-    let proc_text = document.getElementById('proc').value
-    let proc_text_replaced = proc_text.replaceAll('<p1_Radio>', ProcessText);
-    ProcessText(proc_text);
-    globalEditor.setCode(proc_text_replaced)
-}
-
-export function ProcessText(match, ...args) {
-
-    let replace = ""
-    if (document.getElementById('flexRadioDefault2').checked) {
-        replace = "_"
-    }
-
-    return replace
-}
 
 export default function StrudelDemo() {
 
-const hasRun = useRef(false);
+    const hasRun = useRef(false);
+    const [songText, setSongText] = useState(stranger_tune)
+    //const [p1Mode, setP1Mode] = useState("ON");
+
+    const handlePlay = () => {
+        globalEditor.evaluate()
+    }
+
+    const handleStop = () => {
+        globalEditor.stop()
+    }
+
+    const handleProcess = () => {
+        globalEditor?.setCode(songText);
+    };
+
+    const handleProcessPlay = () => {
+        globalEditor?.setCode(songText);
+        globalEditor?.evaluate();
+    };
 
 useEffect(() => {
 
@@ -101,15 +77,11 @@ useEffect(() => {
                     await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
                 },
             });
-            
+
         document.getElementById('proc').value = stranger_tune
-        SetupButtons()
-        Proc()
     }
-
-}, []);
-
-    const [p1Mode, setP1Mode] = useState("on");
+    globalEditor.setCode(songText);
+}, [songText]);
 
 return (
     <div>
@@ -119,15 +91,14 @@ return (
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        <label htmlFor="exampleFormControlTextarea1" className="form-label">Text to preprocess:</label>
-                        <textarea className="form-control" rows="15" id="proc" ></textarea>
+                        <PreprocessTextarea defaultValue={songText} onChange={(e)=>setSongText(e.target.value)} />
                     </div>
                     <div className="col-md-4">
 
                         <nav>
-                            <ProcessButton />
+                            <ProcessButton onProcess={handleProcess} onProcessPlay={handleProcessPlay} />
                             <br />
-                            <PlayStopButton />
+                            <PlayStopButton onPlay={handlePlay} onStop={handleStop} />
                         </nav>
                     </div>
                 </div>
@@ -137,7 +108,7 @@ return (
                         <div id="output" />
                     </div>
                     <div className="col-md-4">
-                        <OnHushButton value={p1Mode} onChange={setP1Mode} />
+                        {/*<OnHushButton value={p1Mode} onChange={setP1Mode} />*/}
                         <ControlsPanel />
                     </div>
                 </div>
