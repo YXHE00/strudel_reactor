@@ -129,11 +129,11 @@ function ControlsPanel() {
             </div>           
 
             {/* Test pre-view (need delete this part later) */}
-            <div className="mt-3">
-                <code className="d-block">
-                    {JSON.stringify({ instrumentCombo, effects, volume, reverb, bpm }, null, 2)}
-                </code>
-            </div>
+            {/*<div className="mt-3">*/}
+            {/*    <code className="d-block">*/}
+            {/*        {JSON.stringify({ instrumentCombo, effects, volume, reverb, bpm }, null, 2)}*/}
+            {/*    </code>*/}
+            {/*</div>*/}
 
             {/* Save and Load alert */}
             {alert.show && (

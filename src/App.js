@@ -103,10 +103,9 @@ return (
                     <div className="col-md-4">
 
                         <nav>
+                            <ProcessButton onProcess={handleProcess} onProcessPlay={handleProcessPlay} />
                             <LastHitPanel />
                             <DrumDurationBar />
-                            <br />
-                            <ProcessButton onProcess={handleProcess} onProcessPlay={handleProcessPlay} />
                             <br />
                             <PlayStopButton onPlay={handlePlay} onStop={handleStop} />
                         </nav>
