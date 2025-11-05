@@ -14,6 +14,9 @@ import PlayStopButton from './Components/PreprocessingEditor/playStopButton';
 import ProcessButton from './Components/PreprocessingEditor/processButton';
 import ControlsPanel from './Components/Preprocessor/controlsPanel';
 import PreprocessTextarea from './Components/Preprocessor/preprocessTextarea';
+import LastHitPanel from './Components/Visualizer/lastHitPanel';
+import DrumDurationBar from './Components/Visualizer/drumDurationBar';
+
 
 let globalEditor = null;
 
@@ -64,7 +67,11 @@ useEffect(() => {
                 transpiler,
                 root: document.getElementById('editor'),
                 drawTime,
-                onDraw: (haps, time) => drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 0 }),
+                onDraw: (haps, time) => {
+                    drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 0 });
+                document.dispatchEvent(
+                    new CustomEvent('d3Haps', { detail: { haps, time } })
+                );},
                 prebake: async () => {
                     initAudioOnFirstClick(); // needed to make the browser happy (don't await this here..)
                     const loadModules = evalScope(
@@ -96,6 +103,9 @@ return (
                     <div className="col-md-4">
 
                         <nav>
+                            <LastHitPanel />
+                            <DrumDurationBar />
+                            <br />
                             <ProcessButton onProcess={handleProcess} onProcessPlay={handleProcessPlay} />
                             <br />
                             <PlayStopButton onPlay={handlePlay} onStop={handleStop} />
@@ -107,6 +117,7 @@ return (
                         <div id="editor" />
                         <div id="output" />
                     </div>
+                    
                     <div className="col-md-4">
                         {/*<OnHushButton value={p1Mode} onChange={setP1Mode} />*/}
                         <ControlsPanel />

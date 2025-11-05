@@ -26,6 +26,25 @@ export default function console_monkey_patch() {
             const event = new CustomEvent("d3Data", { detail: [...logArray] });
             document.dispatchEvent(event);
 
+            const joined = args.join(" ");
+            const m = joined.match(/(\d+)\/(\d+)\s*(?:\u2192|->)\s*(\d+)\/(\d+):\s*s:([^\s]+)(?:\s+bank:([^\s]+))?/i);
+            if (m) {
+                const [, fromNum, fromDen, toNum, toDen, sNameRaw, bank] = m;
+                const sName = String(sNameRaw);
+                const sample = (sName.includes("_") ? sName.split("_").pop() : sName).toLowerCase();
+                const durMatch = joined.match(/duration:([0-9]*\.?[0-9]+)/);
+                const ev = {
+                    kind: "hit",
+                    from: { num: +fromNum, den: +fromDen },
+                    to: { num: +toNum, den: +toDen },
+                    bank,
+                    sName,
+                    sample,
+                    duration: durMatch ? parseFloat(durMatch[1]) : undefined,
+                    t: performance.now(),
+                };
+                document.dispatchEvent(new CustomEvent("d3Hit", { detail: ev }));
+            }
         }
         originalLog.apply(console, args);
     };
