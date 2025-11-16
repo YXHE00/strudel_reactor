@@ -28,7 +28,7 @@ const handleD3Data = (event) => {
 export default function StrudelDemo() {
 
     const hasRun = useRef(false);
-    const [songText, setSongText] = useState(stranger_tune)
+    const [songText, setSongText] = useState("")
     //const [p1Mode, setP1Mode] = useState("ON");
 
     const handlePlay = () => {
@@ -85,7 +85,7 @@ useEffect(() => {
                 },
             });
 
-        document.getElementById('proc').value = stranger_tune
+        //document.getElementById('proc').value = stranger_tune
     }
     globalEditor.setCode(songText);
 }, [songText]);
@@ -98,7 +98,7 @@ return (
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        <PreprocessTextarea defaultValue={songText} onChange={(e)=>setSongText(e.target.value)} />
+                        <PreprocessTextarea value={songText} onChange={setSongText} />
                     </div>
                     <div className="col-md-4">
 

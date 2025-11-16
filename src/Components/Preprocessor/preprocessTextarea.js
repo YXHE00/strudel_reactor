@@ -1,4 +1,6 @@
-function PreprocessTextarea({ defaultValue, onChange }) {
+import DrumBuilder from "../PreprocessingEditor/drumBuilder";
+
+function PreprocessTextarea({ value, onChange }) {
     return (
         <>       
             <div className="input-group pb-2">
@@ -7,7 +9,7 @@ function PreprocessTextarea({ defaultValue, onChange }) {
                 <button className="btn btn-outline-success" type="button">Save</button>
             </div>
             <label htmlFor="exampleFormControlTextarea1" className="form-label">Text to preprocess:</label>
-            <textarea className="form-control" rows="11" id="proc" defaultValue={defaultValue} onChange={onChange}></textarea>
+            <DrumBuilder onChange={onChange} />
         </>
     );
 }
