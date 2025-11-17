@@ -7,7 +7,7 @@ function BuildPatternString(segments = []) {
     //{ type: "square", tokens: ["bd", "sd"] }
 
     // Output:
-    //"rim, <hh hh>, [bd sd]"
+    //"rim <hh hh> [bd sd]"
 
     return segments
         .map((s) => {
@@ -21,7 +21,7 @@ function BuildPatternString(segments = []) {
             }
         })
         .filter((x) => x && x.trim() !== "")
-        .join(", ");
+        .join(" ");
 }
 
 export default BuildPatternString

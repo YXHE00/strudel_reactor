@@ -29,9 +29,57 @@ export default function StrudelDemo() {
 
     const hasRun = useRef(false);
     const [songText, setSongText] = useState("")
-    //const [p1Mode, setP1Mode] = useState("ON");
+    const [effects, setEffects] = useState([]);
 
+    const lineCount = (songText.match(/^\s*s\("/gm) || []).length;
+
+    const lineModes = (() => {
+        const lines = songText.split(/\r?\n/);
+        const modes = [];
+        for (const line of lines) {
+            if (/^\s*s\("/.test(line)) {
+                if (/\.take\(\s*0\s*\)/.test(line)) modes.push('mute');
+                else if (/\.rev\s*\(\s*\)/.test(line) || /\.rev\s*\(\s*0\s*\)/.test(line)) modes.push('rev');
+                else modes.push('play');
+            }
+        }
+        return modes;
+    })();
+
+    const setLineMode = (lineNo, mode) => {
+        setSongText(prev => {
+            const lines = prev.split(/\r?\n/);
+            let n = 0;
+
+            const updated = lines.map(line => {
+                if (!/^\s*s\("/.test(line)) return line;
+
+                n += 1;
+                if (n !== lineNo) return line;
+
+                let out = line
+                    .replace(/\.take\(\s*0\s*\)/g, '')
+                    .replace(/\.rev\s*\(\s*\)/g, '')
+                    .replace(/\.rev\s*\(\s*0\s*\)/g, '');
+
+                const hasTrailingComma = /(\s*,\s*)$/.test(out);
+                const trailingComma = hasTrailingComma ? out.match(/(\s*,\s*)$/)[0] : "";
+                if (hasTrailingComma) out = out.replace(/(\s*,\s*)$/, '');
+
+                if (mode === 'mute') out = `${out}.take(0)`;
+                if (mode === 'rev') out = `${out}.rev()`;
+
+                return trailingComma ? `${out}${trailingComma}` : out;
+            });
+
+            return updated.join("\n");
+        });
+    };
+
+    const audioReadyRef = useRef(false);
     const handlePlay = () => {
+        audioReadyRef.current = true;
+        globalEditor.setCode(songText);
         globalEditor.evaluate()
     }
 
@@ -40,13 +88,20 @@ export default function StrudelDemo() {
     }
 
     const handleProcess = () => {
-        globalEditor?.setCode(songText);
+        globalEditor.setCode(songText);
     };
 
     const handleProcessPlay = () => {
-        globalEditor?.setCode(songText);
-        globalEditor?.evaluate();
+        globalEditor.setCode(songText);
+        globalEditor.evaluate();
     };
+
+    useEffect(() => {
+        if (!globalEditor) return;
+        if (!audioReadyRef.current) return;
+        globalEditor.setCode(songText);
+        globalEditor.evaluate();
+    }, [songText]);
 
 useEffect(() => {
 
@@ -118,8 +173,13 @@ return (
                     </div>
                     
                     <div className="col-md-4">
-                        {/*<OnHushButton value={p1Mode} onChange={setP1Mode} />*/}
-                        <ControlsPanel />
+                        <ControlsPanel
+                            lineCount={lineCount}
+                            lineModes={lineModes}
+                            onChangeLineMode={setLineMode}
+                            effects={effects}
+                            onEffectsChange={setEffects}
+                        />
                     </div>
                 </div>
             </div>
