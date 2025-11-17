@@ -17,6 +17,7 @@ import PreprocessTextarea from './Components/Preprocessor/preprocessTextarea';
 import LastHitPanel from './Components/Visualizer/lastHitPanel';
 import DrumDurationBar from './Components/Visualizer/drumDurationBar';
 import ApplyEffects from './Components/PreprocessingEditor/applyEffects';
+import ApplyMixControls from './Components/PreprocessingEditor/applyMixControls';
 
 
 let globalEditor = null;
@@ -36,6 +37,8 @@ export default function StrudelDemo() {
         phaser: null,
         duckattack: null,
     });
+
+    const [mix, setMix] = useState({volume: null, speed: null,});
 
     const lineCount = (songText.match(/^\s*s\("/gm) || []).length;
 
@@ -85,6 +88,18 @@ export default function StrudelDemo() {
     const handleEffectsChange = (nextEffects) => {
         setEffects(nextEffects);
         setSongText((prev) => ApplyEffects(prev, nextEffects));
+    };
+
+    const handleMixChange = (mix) => {
+        setMix((prev) => {
+            const next = { ...prev, ...mix };
+
+            setSongText((code) =>
+                ApplyMixControls(code, next.volume, next.speed)
+            );
+
+            return next;
+        });
     };
 
     const audioReadyRef = useRef(false);
@@ -190,6 +205,8 @@ return (
                             onChangeLineMode={setLineMode}
                             effects={effects}
                             onEffectsChange={handleEffectsChange}
+                            mix={mix}
+                            onMixChange={handleMixChange}
                         />
                     </div>
                 </div>

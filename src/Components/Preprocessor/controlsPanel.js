@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from "react";
 import InstrumentControl from './instrumentControl.js'
 import EffectControl from "./effectControl.js";
-import MixControl from "./mixControl.js";
+import VolumeSpeedControl from "./volumeSpeedControl.js";
 import TempoControl from "./tempoControl.js";
 
 function ControlsPanel({
@@ -10,10 +10,10 @@ function ControlsPanel({
     onChangeLineMode,
     effects,
     onEffectsChange,
+    mix,
+    onMixChange,
 }) {
 
-    const [volume, setVolume] = useState(50);
-    const [reverb, setReverb] = useState(50);
     const [bpm, setBpm] = useState(120);
     const [alert, setAlert] = useState({ show: false, type: "danger", msg: "" });
 
@@ -80,9 +80,9 @@ function ControlsPanel({
                     <EffectControl effects={effects} onEffectsChange={onEffectsChange} />
                 </div>
 
-                {/* Mix */}
+                {/* Volume & Speed */}
                 <div className="accordion-item">
-                    <MixControl volume={volume} onVolumeChange={setVolume} reverb={reverb} onReverbChange={setReverb} />
+                    <VolumeSpeedControl mix={mix} onMixChange={onMixChange} />
                 </div>
 
                 {/* Tempo */}
