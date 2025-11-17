@@ -77,7 +77,7 @@ function ControlsPanel({
 
                 {/* Effects */}
                 <div className="accordion-item">
-                    <EffectControl selected={effects} onChange={onEffectsChange} />
+                    <EffectControl effects={effects} onEffectsChange={onEffectsChange} />
                 </div>
 
                 {/* Mix */}
