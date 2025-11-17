@@ -1,7 +1,62 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
-function TempoControl({ value, onChange, validate }) {
-    const bpm = value ?? 120;
+function TempoControl({ value, onTempoChange }) {
+    const initialBpm = value.bpm;
+    const initialBpc = value.bpc;
+
+    const [draftBpm, setDraftBpm] = useState(initialBpm);
+    const [draftBpc, setDraftBpc] = useState(initialBpc);
+
+    useEffect(() => {
+        setDraftBpm(initialBpm);
+        setDraftBpc(initialBpc);
+    }, [initialBpm, initialBpc]);
+
+    const limitBpm = (v) => Math.max(40, Math.min(180, v));
+    const limitBpc = [1, 2, 4, 8];
+
+    const handleBpmInput = (e) => {
+        setDraftBpm(Number(e.target.value));
+    };
+
+    const handleBpmStep = (delta) => {
+        setDraftBpm((prev) => limitBpm(Number(prev) + delta));
+    };
+
+    const handleBpcInput = (e) => {
+        setDraftBpc(Number(e.target.value));
+    };
+
+    const handleBpcStep = (direction) => {
+        const current = Number(draftBpc);
+        let idx = limitBpc.indexOf(current);
+        if (idx === -1) {
+            idx = 4;
+        }
+        const nextIndex = Math.min(
+            limitBpc.length - 1,
+            Math.max(0, idx + direction)
+        );
+
+        const nextBpc = limitBpc[nextIndex];
+        setDraftBpc(nextBpc);
+    };
+
+    const handleApply = () => {
+        const bpmNum = Number(draftBpm);
+        const bpcNum = Number(draftBpc);
+
+        if (Number.isNaN(bpmNum) || bpmNum < 40 || bpmNum > 180) {
+            alert("BPM must be a number between 40 and 180");
+            return;
+        }
+
+        if (Number.isNaN(bpcNum) || !limitBpc.includes(bpcNum)) {
+            alert("BPC must be one of 1, 2, 4, 8");
+            return;
+        }
+        onTempoChange({ bpm: bpmNum, bpc: bpcNum });
+    };
 
     return (
         <>
@@ -27,47 +82,29 @@ function TempoControl({ value, onChange, validate }) {
                 <div className="accordion-body">
                     <div className="input-group" style={{ maxWidth: 260 }}>
                         <span className="input-group-text">BPM</span>
-                        <input
-                            type="number"
-                            className="form-control"
-                            min={40}
-                            max={240}
-                            value={bpm}
-                            onChange={(e) => {
-                                const v = +e.target.value;
-                                onChange?.(v);
-                                validate?.(v);
-                            }}
-                        />
-
-                        <button
-                            className="btn btn-outline-secondary"
-                            type="button"
-                            onClick={() => {
-                                const v = Math.min(bpm + 1, 240);
-                                onChange?.(v);
-                                validate?.(v);
-                            }}
-                        >
-                            +
-                        </button>
-
-                        <button
-                            className="btn btn-outline-secondary"
-                            type="button"
-                            onClick={() => {
-                                const v = Math.max(bpm - 1, 40);
-                                onChange?.(v);
-                                validate?.(v);
-                            }}
-                        >
+                        <input className="form-control text-center" min={40} max={180} value={draftBpm} onChange={handleBpmInput} />
+                        <button className="btn btn-outline-secondary" type="button" onClick={() => handleBpmStep(-10)}>
                             -
+                        </button>
+                        <button className="btn btn-outline-secondary" type="button" onClick={() => handleBpmStep(+10)}>
+                            +
                         </button>
                     </div>
 
-                    <small className="text-muted d-block mt-2">
-                        Valid range: 40 - 240
-                    </small>
+                    <div className="input-group mt-3" style={{ maxWidth: 260 }}>
+                        <span className="input-group-text">BPC</span>                        
+                        <input className="form-control text-center" min={1} max={8} value={draftBpc} onChange={handleBpcInput} />
+                        <button className="btn btn-outline-secondary" type="button" onClick={() => handleBpcStep(-1)}>
+                            -
+                        </button>
+                        <button className="btn btn-outline-secondary" type="button" onClick={() => handleBpcStep(+1)}>
+                            +
+                        </button>
+                    </div>
+
+                    <button type="button" className="btn btn-primary mt-3" onClick={handleApply}>
+                        Apply
+                    </button>
                 </div>
             </div>
         </>

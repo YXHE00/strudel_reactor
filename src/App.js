@@ -18,6 +18,7 @@ import LastHitPanel from './Components/Visualizer/lastHitPanel';
 import DrumDurationBar from './Components/Visualizer/drumDurationBar';
 import ApplyEffects from './Components/PreprocessingEditor/applyEffects';
 import ApplyMixControls from './Components/PreprocessingEditor/applyMixControls';
+import ApplyTempo from './Components/PreprocessingEditor/applyTempo';
 
 
 let globalEditor = null;
@@ -38,7 +39,8 @@ export default function StrudelDemo() {
         duckattack: null,
     });
 
-    const [mix, setMix] = useState({volume: null, speed: null,});
+    const [mix, setMix] = useState({ volume: null, speed: null, });
+    const [tempo, setTempo] = useState({ bpm: 120, bpc: 4 });
 
     const lineCount = (songText.match(/^\s*s\("/gm) || []).length;
 
@@ -100,6 +102,13 @@ export default function StrudelDemo() {
 
             return next;
         });
+    };
+
+    const handleTempoChange = (nextTempo) => {
+        setTempo(nextTempo);
+        setSongText((prev) =>
+            ApplyTempo(prev, nextTempo.bpm, nextTempo.bpc)
+        );
     };
 
     const audioReadyRef = useRef(false);
@@ -179,7 +188,7 @@ return (
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        <PreprocessTextarea value={songText} onChange={setSongText} />
+                        <PreprocessTextarea onChange={setSongText} />
                     </div>
                     <div className="col-md-4">
 
@@ -207,6 +216,8 @@ return (
                             onEffectsChange={handleEffectsChange}
                             mix={mix}
                             onMixChange={handleMixChange}
+                            tempo={tempo}
+                            onTempoChange={handleTempoChange}
                         />
                     </div>
                 </div>

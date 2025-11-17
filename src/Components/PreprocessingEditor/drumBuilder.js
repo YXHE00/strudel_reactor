@@ -52,6 +52,7 @@ const DrumBuilder = ({ onChange }) => {
     const code =
         sLines.length > 0
             ? [
+                "setcpm(120/4)",
                 "samples('github:algorave-dave/samples')",
                 "samples('https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/strudel.json')",
                 "samples('https://raw.githubusercontent.com/Mittans/tidal-drum-machines/main/machines/tidal-drum-machines.json')",

@@ -1,6 +1,6 @@
 import DrumBuilder from "../PreprocessingEditor/drumBuilder";
 
-function PreprocessTextarea({ value, onChange }) {
+function PreprocessTextarea({ onChange }) {
     return (
         <>       
             <div className="input-group pb-2">
