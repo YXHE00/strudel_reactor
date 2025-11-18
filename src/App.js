@@ -111,6 +111,86 @@ export default function StrudelDemo() {
         );
     };
 
+    const extractLines = (code) => {
+        return code
+            .split(/\r?\n/)
+            .filter((line) => /^\s*s\("/.test(line));
+    };
+
+    const [songLibrary, setSongLibrary] = useState(() => {
+        const raw = localStorage.getItem("strudelDemo");
+        return raw ? JSON.parse(raw) : [];
+    });
+
+    const handleSaveSong = (name) => {
+        const trimmed = name.trim();
+
+        const lines = extractLines(songText);
+
+        const existingIdx = songLibrary.findIndex(
+            (song) => song.name.toLowerCase() === trimmed.toLowerCase()
+        );
+
+        if (existingIdx !== -1) {
+            const ok = window.confirm(
+                `"${trimmed}" already exists. Overwrite it?`
+            );
+            if (!ok) return null;
+        }
+
+        let savedSong;
+        let updatedLibrary;
+        if (existingIdx !== -1) {
+            savedSong = {
+                ...songLibrary[existingIdx],
+                name: trimmed,
+                songText,
+                lines,
+                effects,
+                mix,
+                tempo,
+            };
+            updatedLibrary = [...songLibrary];
+            updatedLibrary[existingIdx] = savedSong;
+        } else {
+            savedSong = {
+                id: Date.now(),
+                name: trimmed,
+                songText,
+                lines,
+                effects,
+                mix,
+                tempo,
+            };
+
+            updatedLibrary = [...songLibrary, savedSong];
+        }
+        setSongLibrary(updatedLibrary);
+        localStorage.setItem("strudelDemo", JSON.stringify(updatedLibrary));
+        return savedSong;
+    };
+
+    const handleSearchSong = (keyword) => {
+        const lower = keyword.trim().toLowerCase();
+
+        const matches = songLibrary.filter((song) =>
+            song.name.toLowerCase().includes(lower)
+        );
+
+        if (matches.length === 0) {
+            alert(`No saved song matches "${keyword}"`);
+            return;
+        }
+        if (matches.length === 1) {
+            const song = matches[0];
+            setSongText(song.songText)
+            setEffects(song.effects)
+            setMix(song.mix)
+            setTempo(song.tempo)
+            return;
+        }
+    };
+
     const audioReadyRef = useRef(false);
     const handlePlay = () => {
         audioReadyRef.current = true;
@@ -188,7 +268,7 @@ return (
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        <PreprocessTextarea onChange={setSongText} />
+                        <PreprocessTextarea onChange={setSongText} onSaveSong={handleSaveSong} onSearchSong={handleSearchSong} />
                     </div>
                     <div className="col-md-4">
 
